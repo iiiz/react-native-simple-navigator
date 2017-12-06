@@ -1,0 +1,16 @@
+{
+  "name": "react-native-simple-navigator",
+  "version": "0.1.0",
+  "description": "A simple state based navigation controller for property driven views.",
+  "main": "Navigator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "iiiz",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-native": "^0.51.0",
+    "react-redux": "^5.0.6"
+  }
+}
