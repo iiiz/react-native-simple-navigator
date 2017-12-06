@@ -9,8 +9,5 @@
   "author": "iiiz",
   "license": "ISC",
   "dependencies": {
-    "react": "^16.2.0",
-    "react-native": "^0.51.0",
-    "react-redux": "^5.0.6"
   }
 }
