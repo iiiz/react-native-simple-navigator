@@ -86,7 +86,7 @@ class Nav extends Component {
 	}
 
 	render() {
-		const { stack, index, routes, defaultRoute, currentScreen, passProps, configured } = this.props;
+		const { stack, index, routes, defaultRoute, NavComponent, currentScreen, passProps, configured } = this.props;
 		if(!configured) {
 			return ([]);
 		}
@@ -96,7 +96,17 @@ class Nav extends Component {
 			if(CurrentComponent.backAction){
 				CurrentComponent.backAction();
 			}
-			return (<CurrentComponent.screen Navigator={this} {...passProps} />);
+			if ( !NavComponent ) {
+				return (<CurrentComponent.screen Navigator={this} {...passProps} />);
+			} else {
+				return (
+					< NavComponent
+						Navigator={this}
+						Yield={CurrentComponent}
+						passProps={passProps}
+					/>);
+
+			}
 		}
 
 		if (index >= 0) {
