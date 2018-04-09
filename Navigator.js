@@ -98,17 +98,21 @@ class Nav extends Component {
 
 		if(currentScreen && index < 0) {
 			const CurrentComponent = routes[currentScreen];
+			let _passProps = passProps;
 			if(CurrentComponent.backAction){
 				CurrentComponent.backAction();
 			}
+			if (CurrentComponent.defaultProps) {
+				_passProps = { ...CurrentComponent.defaultProps, ...passProps };
+			}
 			if ( !NavComponent ) {
-				return (<CurrentComponent.screen Navigator={this} {...passProps} />);
+				return (<CurrentComponent.screen Navigator={this} {..._passProps} />);
 			} else {
 				return (
 					< NavComponent
 						Navigator={this}
 						Yield={CurrentComponent}
-						passProps={passProps}
+						passProps={_passProps}
 					/>);
 
 			}
