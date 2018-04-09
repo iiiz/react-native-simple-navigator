@@ -9,6 +9,7 @@ import {
 	navigate,
 	push,
 	pop,
+	popN,
 	resetStack
 } from './actions';
 
@@ -31,6 +32,10 @@ class Nav extends Component {
 
 	pop() {
 		this.props.onPop();
+	}
+
+	popN( n ){
+		this.props.onPopN( n );
 	}
 
 	resetStack() {
@@ -59,7 +64,7 @@ class Nav extends Component {
 	shouldComponentUpdate(nextProps, nextState) {
 		const {stack, currentScreen, defaultRoute, configured } = nextProps;
 		
-		// there is a route to go to
+		// there is a route or screen to go to
 		if(currentScreen || stack.length > 0){
 			return true;
 		}
@@ -126,6 +131,7 @@ function mapDispatchToProps(dispatch) {
 		onNavigate: (routeName, passProps) => dispatch(navigate(routeName, passProps)),
 		onPush: (component, passProps) => dispatch(push(component, passProps)),
 		onPop: () => dispatch(pop()),
+		onPopN: ( n ) => dispatch(popN(n)),
 		onResetStack: () => dispatch(resetStack()),
 	};
 }

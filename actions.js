@@ -1,4 +1,11 @@
-import { NAVIGATOR_CONFIG_ROUTES, NAVIGATOR_NAVIGATE, NAVIGATOR_PUSH, NAVIGATOR_POP, NAVIGATOR_RESET_STACK } from './constants';
+import { 
+	NAVIGATOR_CONFIG_ROUTES,
+	NAVIGATOR_NAVIGATE,
+	NAVIGATOR_PUSH,
+	NAVIGATOR_POP,
+	NAVIGATOR_POP_N,
+	NAVIGATOR_RESET_STACK
+} from './constants';
 
 export function configureRoutes(routes, defaultRoute = false) {
 	return {
@@ -25,6 +32,13 @@ export function push(component) {
 
 export function pop() {
 	return { type: NAVIGATOR_POP };
+}
+
+export function popN(n) {
+	return {
+		type: NAVIGATOR_POP_N,
+		number: n,
+	};
 }
 
 export function resetStack() {
