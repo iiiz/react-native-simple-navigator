@@ -7,11 +7,12 @@ import {
 	NAVIGATOR_RESET_STACK
 } from './constants';
 
-export function configureRoutes(routes, defaultRoute = false) {
+export function configureRoutes(routes, defaultRoute, DefaultNavController) {
 	return {
 		type: NAVIGATOR_CONFIG_ROUTES,
 		routes,
 		defaultRoute,
+		DefaultNavController
 	};
 }
 
@@ -23,10 +24,10 @@ export function navigate(routeName, passProps = null) {
 	};
 }
 
-export function push(component) {
+export function push( component ) {
 	return {
 		type: NAVIGATOR_PUSH,
-		component,
+		component
 	}
 }
 

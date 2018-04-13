@@ -16,34 +16,34 @@ import {
 class Nav extends Component {
 	props;
 
-	constructor(props) {
+	constructor ( props ) {
 		super(props);
 		const { onConfigureRoutes, config } = this.props;
-		onConfigureRoutes(config.routes, config.defaultRoute);
+		onConfigureRoutes(config.routes, config.defaultRoute, config.DefaultNavController);
 	}
 
-	navigate(routeName, passProps) {
-		this.props.onNavigate(routeName, passProps);
+	navigate ( routeName, passProps ) {
+		this.props.onNavigate( routeName, passProps );
 	}
 
-	push(component, passProps) {
-		this.props.onPush(component, passProps);
+	push ( component ) {
+		this.props.onPush( component );
 	}
 
-	pop() {
-		this.props.onPop();
+	pop ( ) {
+		this.props.onPop( );
 	}
 
-	popN( n ){
+	popN ( n ){
 		this.props.onPopN( n );
 	}
 
-	resetStack() {
-		this.props.onResetStack();
+	resetStack ( ) {
+		this.props.onResetStack( );
 	}
 
-	handleBackAction() {
-		const { index, stack, routes, currentScreen } = this.props;
+	handleBackAction ( ) {
+		const { index, stack, routes, currentRoute } = this.props;
 		if(index >= 0) {
 			if (stack[index].backAction) {
 				stack[index].backAction();
@@ -52,8 +52,8 @@ class Nav extends Component {
 				this.pop();
 				return true;
 			}
-		} else if (routes[currentScreen].backRoute) {
-			const backRoute = routes[currentScreen].backRoute;
+		} else if (routes[currentRoute].backRoute) {
+			const backRoute = routes[currentRoute].backRoute;
 			this.navigate(backRoute.routeName, backRoute.passProps);
 			return true;
 		} else {
@@ -61,15 +61,15 @@ class Nav extends Component {
 		}
 	}
 
-	shouldComponentUpdate(nextProps, nextState) {
-		const {stack, currentScreen, defaultRoute, configured } = nextProps;
-		
-		// there is a route or screen to go to
-		if(currentScreen || stack.length > 0){
+	shouldComponentUpdate ( nextProps, nextState ) {
+		const {stack, currentRoute, defaultRoute, configured } = nextProps;
+		console.log( currentRoute, configured);
+		// there is a route or component to go to
+		if(currentRoute || stack.length > 0){
 			return true;
 		}
 		// default fallback
-		if(configured && (stack.length === 0) && !currentScreen && defaultRoute) {
+		if(configured && (stack.length === 0) && !currentRoute && defaultRoute) {
 			this.navigate(defaultRoute);
 			return false;
 		} else {
@@ -91,37 +91,58 @@ class Nav extends Component {
 	}
 
 	render() {
-		const { stack, index, routes, defaultRoute, NavComponent, currentScreen, passProps, configured } = this.props;
+		const { stack, index, routes, defaultRoute, DefaultNavController, currentRoute, passProps, configured } = this.props;
 		if(!configured) {
 			return ([]);
 		}
+		let Next;
+		let _passProps;
+		let Controller = false;
 
-		if(currentScreen && index < 0) {
-			const CurrentComponent = routes[currentScreen];
-			let _passProps = passProps;
-			if(CurrentComponent.backAction){
-				CurrentComponent.backAction();
-			}
-			if (CurrentComponent.defaultProps) {
-				_passProps = { ...CurrentComponent.defaultProps, ...passProps };
-			}
-			if ( !NavComponent ) {
-				return (<CurrentComponent.screen Navigator={this} {..._passProps} />);
+		// Is a route
+		if (currentRoute && index < 0) {
+			Next = routes[currentRoute];
+
+			// set props
+			if (Next.defaultProps) {
+				_passProps = { ...Next.defaultProps, ...passProps };
 			} else {
-				return (
-					< NavComponent
-						Navigator={this}
-						Yield={CurrentComponent}
-						passProps={_passProps}
-					/>);
-
+				_passProps = passProps;
 			}
+
+			// set nav controller
+			if (DefaultNavController && !Next.NavController) {
+				Controller = DefaultNavController;
+			} else if (Next.NavController) {
+				Conroller = Next.NavController;
+			}
+		
+		//is a stacked component
+		} else if (index >= 0) {
+			Next = stack[index];
+			_passProps = Next.passProps;
+			if (Next.NavController) {
+				Controller = Next.NavController
+			} else if (Next.useNav) {
+				Controller = DefaultNavController;
+			}
+		} else {
+			console.error("Navigator Error: no current route or stack index out of bounds.");
 		}
 
-		if (index >= 0) {
-			const PushedScreen = stack[index];
-			return (<PushedScreen.component Navigator={this} {...PushedScreen.passProps} />);
-		}		
+		if (Controller && Next) {
+			return (
+				<Controller
+					Navigator={this}
+					Yield={Next}
+					passProps={_passProps}
+				/>);
+		} else if (Next) {
+			return (<Next.component Navigator={this} {..._passProps} />);
+		} else {
+			console.warn("No component provided to Navigator.");
+			return ([]);
+		}
 	}
 }
 
@@ -131,9 +152,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		onConfigureRoutes: (routes, defaultRoute) => dispatch(configureRoutes(routes, defaultRoute)),
+		onConfigureRoutes: (routes, defaultRoute, DefaultNavController) => dispatch(configureRoutes(routes, defaultRoute, DefaultNavController)),
 		onNavigate: (routeName, passProps) => dispatch(navigate(routeName, passProps)),
-		onPush: (component, passProps) => dispatch(push(component, passProps)),
+		onPush: (component ) => dispatch(push( component )),
 		onPop: () => dispatch(pop()),
 		onPopN: ( n ) => dispatch(popN(n)),
 		onResetStack: () => dispatch(resetStack()),

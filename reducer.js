@@ -12,7 +12,8 @@ const initialState = {
 	index: -1, // required to register a state change
 	routes: {},
 	defaultRoute: false,
-	currentScreen: false,
+	DefaultNavController:  null,
+	currentRoute: false,
 	passProps: null,
 	configured: false,
 };
@@ -20,13 +21,13 @@ const initialState = {
 export default function NavState(state = initialState, action) {
 	switch (action.type) {
 		case NAVIGATOR_CONFIG_ROUTES:
-			return { ...state, routes: action.routes, defaultRoute: action.defaultRoute, configured: true };
+			return { ...state, routes: action.routes, defaultRoute: action.defaultRoute, DefaultNavController: action.DefaultNavController, configured: true };
 		case NAVIGATOR_NAVIGATE:
-			return { ...state, currentScreen: action.routeName, passProps: action.passProps, stack: [], index: -1 };
+			return { ...state, currentRoute: action.routeName, ...action.passProps, stack: [], index: -1 };
 		case NAVIGATOR_PUSH:
 			state.stack.push(action.component);
 			state.index++;
-			return { ...state  };
+			return { ...state };
 		case NAVIGATOR_POP:
 			state.stack.pop();
 			state.index--;
