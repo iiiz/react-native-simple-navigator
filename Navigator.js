@@ -62,8 +62,13 @@ class Nav extends Component {
 	}
 
 	shouldComponentUpdate ( nextProps, nextState ) {
-		const {stack, currentRoute, defaultRoute, configured } = nextProps;
-		console.log( currentRoute, configured);
+		const {
+			stack,
+			currentRoute,
+			defaultRoute,
+			configured
+		} = nextProps;
+		
 		// there is a route or component to go to
 		if(currentRoute || stack.length > 0){
 			return true;
